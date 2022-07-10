@@ -1,0 +1,29 @@
+#game{
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-size: 17px;
+    letter-spacing: -0.4px;
+    word-spacing: 0px;
+    color: #000000;
+    font-weight: 400;
+    text-decoration: none;
+    font-style: normal;
+    font-variant: normal;
+    text-transform: none;
+}
+h1{
+    font-weight:400;
+    
+}
+h2{
+    font-weight: 400;
+}
+#game:not([data-appstatus="selectOtherPlayer"]) .select-other-player {
+    display: none;
+}
+#game:not([data-appstatus="selectLocalPlayer"]) .select-local-player {
+    display: none;
+}
+#game:not([data-appstatus="ready"]) .gameboard {
+    display: none;
+}
+
