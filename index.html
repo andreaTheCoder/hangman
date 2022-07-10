@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <title>Multiplayer Hangman!</title>
+        <link rel="stylesheet" href="./multiplayer-game.css">
+        <script src="../js/peerjs.min.js"></script>
+        <link rel="icon" href="hangman-icon.avif">
+    </head>
+    <body>
+        <div id="game" class="" data-appstatus="selectLocalPlayer">
+            <h1>HANGMAN!</h1>
+            
+            <div id="player-buttons" >
+                <div class="select-local-player">
+                    <h2 class="info-provider-text">Who are you?</h2>
+                    <button data-name = "Andrea" data-action="getPlayerName">Andrea</button>
+                    <button data-name="Sophie" data-action="getPlayerName">Sophie</button>
+                    <button data-name="Ira" data-action="getPlayerName">Ira</button>
+                    <button data-name="Kara" data-action="getPlayerName">Kara</button>
+                    <button data-name="Dad" data-action="getPlayerName">Dad</button>
+                    <button data-name="Guest" data-action="getPlayerName">Guest</button>
+                </div>
+                <div class="select-other-player">
+                    <h2 class="info-provider-text">Who are you trying to connect to?</h2>
+                    <button data-name = "Andrea" data-action="getOtherPlayerName">Andrea</button>
+                    <button data-name="Sophie" data-action="getOtherPlayerName">Sophie</button>
+                    <button data-name="Ira" data-action="getOtherPlayerName">Ira</button>
+                    <button data-name="Kara" data-action="getOtherPlayerName">Kara</button>
+                    <button data-name="Dad" data-action="getOtherPlayerName">Dad</button>
+                    <button data-name="Guest" data-action="getOtherPlayerName">Guest</button>
+                </div>
+            </div>
+            <div class="gameboard">
+                <div id="history">
+                    <div>Log</div>
+                </div>
+                <div id="send-msg-btn">
+                    <input type="text" id="input-msg">
+                    <button data-action="send-msg">Send a message!</button>
+                </div>
+            </div>
+
+            <script src="../js/multiplayer-lib.js"></script>
+        </div>
+    </body>
+</html>
