@@ -13,9 +13,11 @@ const music = new Audio('notification-tone-swift-gesture.mp3')
 function setAppStatus(status) {
     let game = document.body.querySelector("#game");
     game.dataset.appstatus = status;
+    infoProviderText = document.body.querySelector(".info-provider-text")
     if(status==="ready"){
-        infoProviderText = document.body.querySelector("#info-provider-text")
-        infoProviderText.innerHTML = `Connected with ${otherPlayer}`
+        infoProviderText.innerHTML = "Connected to other player! (:"
+    }else if(status===appStateSelectOtherPlayer){
+        infoProviderText.innerHTML = "Select player you want to connect to"
     }
 }
 function initConnection(myId) {
@@ -33,10 +35,13 @@ function initConnection(myId) {
     });
     peer.on('connection', function(incomingConn) {
         onConnectionReady(incomingConn);
+
     });
 }
 function onConnectionReady(connection) {
     // Need to stop using global conn
+          infoProviderText = document.body.querySelector("#info-provider-text")
+        infoProviderText.innerHTML = `Connected with ${otherPlayer}`
     conn = connection;
     connection.otherPlayerId = connection.peer.replace(baseId, '');
     let msg = `Connection with ${connection.otherPlayerId} is ready`;
@@ -82,10 +87,7 @@ function addToLog(message){
     history.appendChild(node);
     history.scrollTop = history.scrollHeight;
 }
-function setAppStatus(status) {
-    let game = document.body.querySelector("#game");
-    game.dataset.appstatus = status;
-}
+
 function clickHandler(e){
     let action = e.target.dataset.action
     if(action==="getPlayerName"){
@@ -98,9 +100,6 @@ function clickHandler(e){
         }else{
             addToLog("Hello "+ yourName+"!");
         }
-        
-        playerButtons = document.body.querySelector("#player-buttons")
-        playerButtons.classList.replace('not-started','started');
     }else if(action==="send-msg"){
         let inputMsg = document.body.querySelector("#input-msg");
         msg=inputMsg.value;
