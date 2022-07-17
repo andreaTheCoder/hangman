@@ -2,13 +2,22 @@ const baseId = "andrea-awesome-multiplayer-id-"
 const playerNames = ["andrea","sophie","ira","kara","dad","guest"];
 const appStateSelectLocalPlayer = "selectLocalPlayer";
 const appStateSelectOtherPlayer = "selectOtherPlayer";
+const appStateSelectWaitingForConnection = "waiting-for-connecting";
 const appStateReady = "ready";
 
-
+let otherPlayer = null
 let peer = null;
 let conn = null;
 let yourName = '';
 const music = new Audio('notification-tone-swift-gesture.mp3')
+function setAppStatus(status) {
+    let game = document.body.querySelector("#game");
+    game.dataset.appstatus = status;
+    if(status==="ready"){
+        infoProviderText = document.body.querySelector("#info-provider-text")
+        infoProviderText.innerHTML = `Connected with ${otherPlayer}`
+    }
+}
 function initConnection(myId) {
     let myIdString = baseId+myId;
     console.log("Init my connection with id " + myIdString);
@@ -51,9 +60,9 @@ function onConnectionReady(connection) {
 function sendMsg(msg) {
     if (conn) {
         conn.send(msg);
-        addToLog(`You:${msg} `);
+        addToLog(`You: ${msg} `);
     }else{
-        addToLog(`Your message:'${msg}' failed to send. Try connecting to another player first.`)
+        addToLog(`Your message: '${msg}' failed to send. Try connecting to another player first.`)
     }
 }
 function createConnection(otherPlayerId) {
@@ -105,9 +114,18 @@ function clickHandler(e){
     
 }
 
+function sendMsgWithEnter(){
+    let inputMsg = document.body.querySelector("#input-msg");
+    let msg = inputMsg.value
+    let sendMsgBtn = document.body.querySelector("send-msg-btn")
+    sendMsgBtn.click()
+
+}
+
 function initGame(){
     let game = document.body.querySelector("#game");
     game.addEventListener('click', clickHandler);
+    game.addEventListener('enter', sendMsgWithEnter);
 }   
 initGame()
 //fix hiding problem

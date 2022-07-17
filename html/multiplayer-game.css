@@ -26,4 +26,8 @@ h2{
 #game:not([data-appstatus="ready"]) .gameboard {
     display: none;
 }
+#history {
+    height: 200px;
+    overflow: scroll;
+}
 
