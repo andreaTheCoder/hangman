@@ -1,9 +1,11 @@
-const baseId = "andrea-awesome-multiplayer-id-"
+const baseId = "the-andrea-awesome-multiplayer-id-"
 const playerNames = ["andrea","sophie","ira","kara","dad","guest"];
 const appStateSelectLocalPlayer = "selectLocalPlayer";
 const appStateSelectOtherPlayer = "selectOtherPlayer";
 const appStateSelectWaitingForConnection = "waiting-for-connecting";
 const appStateReady = "ready";
+let infoProviderText = document.body.querySelector("#info-provider-text")
+let game = document.body.querySelector("#game");
 
 let otherPlayer = null
 let peer = null;
@@ -11,7 +13,6 @@ let conn = null;
 let yourName = '';
 const music = new Audio('notification-tone-swift-gesture.mp3')
 function setAppStatus(status) {
-    let game = document.body.querySelector("#game");
     game.dataset.appstatus = status;
     infoProviderText = document.body.querySelector(".info-provider-text")
     if(status==="ready"){
@@ -20,15 +21,14 @@ function setAppStatus(status) {
         infoProviderText.innerHTML = "Select player you want to connect to"
     }
 }
-function initConnection(myId) {
+function openMySocketToOtherPlayers(myId) {
     let myIdString = baseId+myId;
-    console.log("Init my connection with id " + myIdString);
+    console.log("opening my socket to other players (my id: " + myIdString +")");
     peer = new Peer(myIdString, {
         debug: 2
     });
     // on open will be launch when you successfully connect to PeerServer
     peer.on('open', function() {
-        addToLog("Awaiting connection...");
     });
     peer.on('error', function(err) {
         console.error('Connection error', err);
@@ -40,8 +40,7 @@ function initConnection(myId) {
 }
 function onConnectionReady(connection) {
     // Need to stop using global conn
-          infoProviderText = document.body.querySelector("#info-provider-text")
-        infoProviderText.innerHTML = `Connected with ${otherPlayer}`
+        infoProviderText.innerHTML = `Playing Multiplayer Hangman! with ${otherPlayer}`
     conn = connection;
     connection.otherPlayerId = connection.peer.replace(baseId, '');
     let msg = `Connection with ${connection.otherPlayerId} is ready`;
@@ -54,11 +53,11 @@ function onConnectionReady(connection) {
         addToLog(msg);
     });
     connection.on('close', function(data){
-        let msg = `Connection with ${connection.otherPlayerId} is closed`;
+        infoProviderText.innerHTML = `Connection with ${connection.otherPlayerId} is closed`;
         addToLog(msg);
     });
     connection.on('error', function(data){
-        let msg = `Connection error ${connection.otherPlayerId} ${err.type}`;
+        infoProviderText.innerHTML = `Connection error ${connection.otherPlayerId} ${err.type}`;
         addToLog(msg);
     });
 }
@@ -70,7 +69,7 @@ function sendMsg(msg) {
         addToLog(`Your message: '${msg}' failed to send. Try connecting to another player first.`)
     }
 }
-function createConnection(otherPlayerId) {
+function createConnectionWithOtherPlayer(otherPlayerId) {
     const otherPlayer = baseId + otherPlayerId;
     console.log("Connecting to " + otherPlayer)
     let curConn = peer.connect(otherPlayer);
@@ -92,7 +91,7 @@ function clickHandler(e){
     let action = e.target.dataset.action
     if(action==="getPlayerName"){
         yourName = e.target.dataset.name;
-        initConnection(yourName);
+        openMySocketToOtherPlayers(yourName);
         setAppStatus(appStateSelectOtherPlayer);
         if(yourName==="Andrea"){
             addToLog("Welcome Andrea! You are the best! (whoever coded this is awesome)")
@@ -106,25 +105,15 @@ function clickHandler(e){
         sendMsg(msg);
         inputMsg.value = '';
     } else if (action == 'getOtherPlayerName') {
-        createConnection(e.target.dataset.name)
-        //createConnection("with other player");
-        //make custom chooser
+        createConnectionWithOtherPlayer(e.target.dataset.name);
+        infoProviderText.innerHTML = `Connecting with ${e.target.dataset.name}`
     }
     
 }
 
-function sendMsgWithEnter(){
-    let inputMsg = document.body.querySelector("#input-msg");
-    let msg = inputMsg.value
-    let sendMsgBtn = document.body.querySelector("send-msg-btn")
-    sendMsgBtn.click()
-
-}
 
 function initGame(){
-    let game = document.body.querySelector("#game");
     game.addEventListener('click', clickHandler);
-    game.addEventListener('enter', sendMsgWithEnter);
 }   
 initGame()
 //fix hiding problem
