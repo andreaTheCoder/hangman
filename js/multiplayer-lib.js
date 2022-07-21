@@ -8,6 +8,7 @@ let infoProviderText = document.body.querySelector("#info-provider-text")
 let game = document.body.querySelector("#game");
 let otherPlayerPickedType = false
 let youPickedPlayerType = false
+let playerType = "fghjk"
 
 let peer = null;
 let conn = null;
@@ -67,10 +68,10 @@ function onConnectionReady(connection) {
             addToLog(msg);
         }else if(msgType==="otherPlayerType"){
          otherPlayerPickedType = true
-            if(playerType==="Guesser"){
+            if(info==="guesser"){
                 curPlayerGuesser = document.body.querySelector("#curPlayerGuesser")
                 curPlayerGuesser.innerHTML = connection.otherPlayerId
-            }else if(playerType==="WordPicker"){
+            }else if(info==="wordPicker"){
                 curPlayerWordPicker = document.body.querySelector("#curPlayerWordPicker")
                 curPlayerWordPicker.innerHTML = connection.otherPlayerId
             }
@@ -90,8 +91,8 @@ function onConnectionReady(connection) {
 }
 function sendMsg(msg) {
     if (conn) {
+        addToLog(`You are a ${msg.data}! `);
         conn.send(JSON.stringify(msg));
-        addToLog(`You: ${msg} `);
     }else{
         addToLog(`Your message: '${msg}' failed to send. Try connecting to another player first.`)
     }
@@ -141,16 +142,16 @@ function clickHandler(e){
         changeText(msg)
     }else if(action==="selectPlayerType"){
         youPickedPlayerType = true
-        e.target.dataset.playertype = playerType
+       playerType = e.target.dataset.playertype 
         if(playerType==="Guesser"){
-            curGuesserPlayerTag = document.body.querySelector("#curGuesserPlayer")
+            curGuesserPlayerTag = document.body.querySelector("#curPlayerGuesser")
             curGuesserPlayerTag.innerHTML = yourName
             obj = {}
             obj.data=`guesser`
             obj.type = 'otherPlayerType'
             sendMsg(obj)
         }else if(playerType==="WordPicker"){
-            curWordPickerPlayerTag = document.body.querySelector("#curWordPickerPlayer")
+            curWordPickerPlayerTag = document.body.querySelector("#curPlayerWordPicker")
             curWordPickerPlayerTag.innerHTML = yourName
             obj = {}
             obj.data=`wordPicker`

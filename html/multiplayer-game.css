@@ -33,3 +33,9 @@ h2{
 #game:not([data-appstatus="selectPlayerType"]) .select-player-type{
     display: none;
 }
+#curPlayerGuesser{
+    accent-color: red;
+}
+#curPlayerWordPicker{
+    accent-color: red;
+}
