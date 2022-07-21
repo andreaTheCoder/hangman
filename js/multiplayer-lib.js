@@ -14,6 +14,7 @@ let conn = null;
 let yourName = '';
 let obj = {}
 const music = new Audio('notification-tone-swift-gesture.mp3')
+const ding = new Audio('ding-sound-effect_2.mp3')
 function changeText(text){
     infoProviderText.innerHTML = text
 }
@@ -49,6 +50,7 @@ function openMySocketToOtherPlayers(myId) {
 }
 function onConnectionReady(connection) {
     // Need to stop using global conn
+    ding.play()
     conn = connection;
     connection.otherPlayerId = connection.peer.replace(baseId, '');
     console.log(`connected with ${connection.otherPlayerId}`)
