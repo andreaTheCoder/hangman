@@ -1,25 +1,24 @@
-const baseId = "the-andrea-awesome-multiplayer-id-"
-const playerNames = ["andrea","sophie","ira","kara","dad","guest"];
+const baseId = "ok-cool-andrea-awesome-multiplayer-id-"
 const appStateSelectLocalPlayer = "selectLocalPlayer";
 const appStateSelectOtherPlayer = "selectOtherPlayer";
-const appStateSelectWaitingForConnection = "waiting-for-connecting";
+const appStateWaitingForConnection = "waitingForConnection";
 const appStateReady = "ready";
 let infoProviderText = document.body.querySelector("#info-provider-text")
 let game = document.body.querySelector("#game");
 
-let otherPlayer = null
 let peer = null;
 let conn = null;
 let yourName = '';
 const music = new Audio('notification-tone-swift-gesture.mp3')
-function setAppStatus(status) {
+function setAppStatus(status,playerName) {
     game.dataset.appstatus = status;
     infoProviderText = document.body.querySelector(".info-provider-text")
     if(status==="ready"){
-        infoProviderText.innerHTML = "Connected to other player! (:"
+        infoProviderText.innerHTML = `Playing Hangman with ${playerName}! :)`
     }else if(status===appStateSelectOtherPlayer){
         infoProviderText.innerHTML = "Select player you want to connect to"
     }
+    console.log(`your status is : ${status}`)
 }
 function openMySocketToOtherPlayers(myId) {
     let myIdString = baseId+myId;
@@ -40,11 +39,11 @@ function openMySocketToOtherPlayers(myId) {
 }
 function onConnectionReady(connection) {
     // Need to stop using global conn
-        infoProviderText.innerHTML = `Playing Multiplayer Hangman! with ${otherPlayer}`
     conn = connection;
     connection.otherPlayerId = connection.peer.replace(baseId, '');
+    console.log(`connected with ${connection.otherPlayerId}`)
     let msg = `Connection with ${connection.otherPlayerId} is ready`;
-    setAppStatus(appStateReady)
+    setAppStatus(appStateReady,connection.otherPlayerId)
     addToLog(msg);
     connection.on('data', function(data){
         music.play()
@@ -70,6 +69,7 @@ function sendMsg(msg) {
     }
 }
 function createConnectionWithOtherPlayer(otherPlayerId) {
+    setAppStatus(appStateWaitingForConnection,"ohok")
     const otherPlayer = baseId + otherPlayerId;
     console.log("Connecting to " + otherPlayer)
     let curConn = peer.connect(otherPlayer);
@@ -92,7 +92,7 @@ function clickHandler(e){
     if(action==="getPlayerName"){
         yourName = e.target.dataset.name;
         openMySocketToOtherPlayers(yourName);
-        setAppStatus(appStateSelectOtherPlayer);
+        setAppStatus(appStateSelectOtherPlayer,"name");
         if(yourName==="Andrea"){
             addToLog("Welcome Andrea! You are the best! (whoever coded this is awesome)")
             
