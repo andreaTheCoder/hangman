@@ -67,8 +67,8 @@ function onConnectionReady(connection) {
             let msg = `${connection.otherPlayerId}: ${info}`;
             addToLog(msg);
         }else if(msgType==="otherPlayerType"){
-         otherPlayerPickedType = true
-            if(info==="guesser"){
+         otherPlayerPickedType = true   
+         if(info==="guesser"){
                 curPlayerGuesser = document.body.querySelector("#curPlayerGuesser")
                 curPlayerGuesser.innerHTML = connection.otherPlayerId
             }else if(info==="wordPicker"){

@@ -34,8 +34,8 @@ h2{
     display: none;
 }
 #curPlayerGuesser{
-    accent-color: red;
+    color: red;
 }
 #curPlayerWordPicker{
-    accent-color: red;
+    color: blue;
 }
