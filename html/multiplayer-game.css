@@ -30,9 +30,6 @@ h2{
 #game:not([data-appstatus="selectLocalPlayer"]) .select-local-player {
     display: none;
 }
-#game:not([data-appstatus="selectLocalPlayer"]) .select-local-player {
-    display: none;
-}
-#game:not([data-appstatus="ready"]) .gameplay-interface {
+#game:not([data-appstatus="selectPlayerType"]) .select-player-type{
     display: none;
 }

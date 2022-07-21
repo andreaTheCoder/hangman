@@ -32,7 +32,13 @@
                     
                 </div>
                 <div class = "gameplay-interface">
-                    <h1>this is where my games gonna be</h1>
+                    <div class = "select-player-type">
+                        <button data-playertype="Guesser" data-action="selectPlayerType">Guesser</button>
+                        <button data-playertype="WordPicker" data-action="selectPlayerType">Word Picker</button>
+                        <button data-name="startGame">Start Game</button>
+                        <small>Guesser:<span id="curGuesserPlayer"> none</span> Word Picker:<span id="curWordPickerPlayer">none</span></small>
+                        
+                    </div>
                 </div>
             </div>
             <div class="gameboard">

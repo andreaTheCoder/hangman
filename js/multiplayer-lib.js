@@ -1,22 +1,32 @@
-const baseId = "ok-cool-andrea-awesome-multiplayer-id-"
+const baseId = "cool-andrea-awesome-multiplayer-id-technoblade-"
 const appStateSelectLocalPlayer = "selectLocalPlayer";
 const appStateSelectOtherPlayer = "selectOtherPlayer";
 const appStateWaitingForConnection = "waitingForConnection";
-const appStateReady = "ready";
+const appStateSelectPlayerType = "selectPlayerType";
+const playingGame = "playingGame";
 let infoProviderText = document.body.querySelector("#info-provider-text")
 let game = document.body.querySelector("#game");
+let otherPlayerPickedType = false
+let youPickedPlayerType = false
 
 let peer = null;
 let conn = null;
 let yourName = '';
+let obj = {}
 const music = new Audio('notification-tone-swift-gesture.mp3')
+function changeText(text){
+    infoProviderText.innerHTML = text
+}
+function startGame(){
+    addToLog("The game has started")
+}
 function setAppStatus(status,playerName) {
     game.dataset.appstatus = status;
     infoProviderText = document.body.querySelector(".info-provider-text")
-    if(status==="ready"){
-        infoProviderText.innerHTML = `Playing Hangman with ${playerName}! :)`
+    if(status==="selectPlayerType"){
+        infoProviderText.innerHTML = `Pick who you want to be! :)`
     }else if(status===appStateSelectOtherPlayer){
-        infoProviderText.innerHTML = "Select player you want to connect to"
+        changeText("Select player you want to connect to")
     }
     console.log(`your status is : ${status}`)
 }
@@ -43,26 +53,42 @@ function onConnectionReady(connection) {
     connection.otherPlayerId = connection.peer.replace(baseId, '');
     console.log(`connected with ${connection.otherPlayerId}`)
     let msg = `Connection with ${connection.otherPlayerId} is ready`;
-    setAppStatus(appStateReady,connection.otherPlayerId)
+    setAppStatus(appStateSelectPlayerType,connection.otherPlayerId)
     addToLog(msg);
     connection.on('data', function(data){
-        music.play()
-        let msg = `${connection.otherPlayerId}: ${data}`;
+        music.play();
+        let obj = JSON.parse(data);
+        let msgType = obj?.type;
+        let info = obj.data
+        if(msgType === "msg"){
+            let msg = `${connection.otherPlayerId}: ${info}`;
+            addToLog(msg);
+        }else if(msgType==="otherPlayerType"){
+         otherPlayerPickedType = true
+            if(playerType==="Guesser"){
+                curPlayerGuesser = document.body.querySelector("#curPlayerGuesser")
+                curPlayerGuesser.innerHTML = connection.otherPlayerId
+            }else if(playerType==="WordPicker"){
+                curPlayerWordPicker = document.body.querySelector("#curPlayerWordPicker")
+                curPlayerWordPicker.innerHTML = connection.otherPlayerId
+            }
+        }
         console.log(msg);
-        addToLog(msg);
     });
     connection.on('close', function(data){
-        infoProviderText.innerHTML = `Connection with ${connection.otherPlayerId} is closed`;
+        msg = `Connection with ${connection.otherPlayerId} is closed`;
+        changeText(msg)
         addToLog(msg);
     });
     connection.on('error', function(data){
-        infoProviderText.innerHTML = `Connection error ${connection.otherPlayerId} ${err.type}`;
+        msg = `Connection error ${connection.otherPlayerId} ${err.type}`;
+        changeText(msg)
         addToLog(msg);
     });
 }
 function sendMsg(msg) {
     if (conn) {
-        conn.send(msg);
+        conn.send(JSON.stringify(msg));
         addToLog(`You: ${msg} `);
     }else{
         addToLog(`Your message: '${msg}' failed to send. Try connecting to another player first.`)
@@ -100,13 +126,41 @@ function clickHandler(e){
             addToLog("Hello "+ yourName+"!");
         }
     }else if(action==="send-msg"){
+         obj = {}
         let inputMsg = document.body.querySelector("#input-msg");
         msg=inputMsg.value;
-        sendMsg(msg);
+        obj.data = msg
+        obj.type = "msg"
+        sendMsg(obj);
         inputMsg.value = '';
     } else if (action == 'getOtherPlayerName') {
         createConnectionWithOtherPlayer(e.target.dataset.name);
-        infoProviderText.innerHTML = `Connecting with ${e.target.dataset.name}`
+        msg = `Connecting with ${e.target.dataset.name}`
+        changeText(msg)
+    }else if(action==="selectPlayerType"){
+        youPickedPlayerType = true
+        e.target.dataset.playertype = playerType
+        if(playerType==="Guesser"){
+            curGuesserPlayerTag = document.body.querySelector("#curGuesserPlayer")
+            curGuesserPlayerTag.innerHTML = yourName
+            obj = {}
+            obj.data=`guesser`
+            obj.type = 'otherPlayerType'
+            sendMsg(obj)
+        }else if(playerType==="WordPicker"){
+            curWordPickerPlayerTag = document.body.querySelector("#curWordPickerPlayer")
+            curWordPickerPlayerTag.innerHTML = yourName
+            obj = {}
+            obj.data=`wordPicker`
+            obj.type = 'otherPlayerType'
+            sendMsg(obj)
+        }
+    }else if(action==="startGame"){
+        if(classlist.game==="ready"){
+            startGame()
+        }else{
+            addToLog("Try picking who you want to be before you start the game")
+        }
     }
     
 }
