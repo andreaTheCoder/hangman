@@ -4,6 +4,9 @@ const appStateSelectOtherPlayer = "selectOtherPlayer";
 const appStateWaitingForConnection = "waitingForConnection";
 const appStateSelectPlayerType = "selectPlayerType";
 const playingGame = "playingGame";
+let appStateReady = "ready"
+let readyToStartGame = false
+let otherPlayerReady = false
 let infoProviderText = document.body.querySelector("#info-provider-text")
 let game = document.body.querySelector("#game");
 let otherPlayerPickedType = false
@@ -42,7 +45,7 @@ function openMySocketToOtherPlayers(myId) {
     peer.on('open', function() {
     });
     peer.on('error', function(err) {
-        console.error('Connection error', err);
+        console.log('Connection error');
     });
     peer.on('connection', function(incomingConn) {
         onConnectionReady(incomingConn);
@@ -67,7 +70,7 @@ function onConnectionReady(connection) {
             let msg = `${connection.otherPlayerId}: ${info}`;
             addToLog(msg);
         }else if(msgType==="otherPlayerType"){
-         otherPlayerPickedType = true   
+         otherPlayerReady = true   
          if(info==="guesser"){
                 curPlayerGuesser = document.body.querySelector("#curPlayerGuesser")
                 curPlayerGuesser.innerHTML = connection.otherPlayerId
@@ -90,12 +93,16 @@ function onConnectionReady(connection) {
     });
 }
 function sendMsg(msg) {
+    conn.send(JSON.stringify(msg))
     if (conn) {
-        addToLog(`You are a ${msg.data}! `);
-        conn.send(JSON.stringify(msg));
-    }else{
-        addToLog(`Your message: '${msg}' failed to send. Try connecting to another player first.`)
+        if(msg.type==="msg"){
+            addToLog(`You: ${msg.data}`);
+        }else if(msg.type==="otherPlayerType"){
+            addToLog(`You are a ${msg.data}! `);
+        }else{
+            addToLog(`Your message: '${msg}' failed to send. Try connecting to another player first.`)
     }
+}
 }
 function createConnectionWithOtherPlayer(otherPlayerId) {
     setAppStatus(appStateWaitingForConnection,"ohok")
@@ -118,6 +125,7 @@ function addToLog(message){
 
 function clickHandler(e){
     let action = e.target.dataset.action
+    let yourName = ""
     if(action==="getPlayerName"){
         yourName = e.target.dataset.name;
         openMySocketToOtherPlayers(yourName);
@@ -141,7 +149,7 @@ function clickHandler(e){
         msg = `Connecting with ${e.target.dataset.name}`
         changeText(msg)
     }else if(action==="selectPlayerType"){
-        youPickedPlayerType = true
+        readyToStartGame = true
        playerType = e.target.dataset.playertype 
         if(playerType==="Guesser"){
             curGuesserPlayerTag = document.body.querySelector("#curPlayerGuesser")
@@ -154,12 +162,12 @@ function clickHandler(e){
             curWordPickerPlayerTag = document.body.querySelector("#curPlayerWordPicker")
             curWordPickerPlayerTag.innerHTML = yourName
             obj = {}
-            obj.data=`wordPicker`
+            obj.data=`word picker`
             obj.type = 'otherPlayerType'
             sendMsg(obj)
         }
     }else if(action==="startGame"){
-        if(classlist.game==="ready"){
+        if(readyToStartGame===true+otherPlayerReady===true){
             startGame()
         }else{
             addToLog("Try picking who you want to be before you start the game")
@@ -167,10 +175,25 @@ function clickHandler(e){
     }
     
 }
-
-
+function hi(e){
+    if(e.charCode===13){
+        obj = {}
+        let inputMsg = document.body.querySelector("#input-msg");
+        msg=inputMsg.value;
+        obj.data = msg
+        obj.type = "msg"
+        inputMsg.value = '';
+        if (conn) {
+            addToLog(`You : ${obj.data}! `);
+            conn.send(JSON.stringify(msg));
+        }else{
+            addToLog(`Your message: '${msg}' failed to send. Try connecting to another player first.`)
+        }
+    }
+}
 function initGame(){
     game.addEventListener('click', clickHandler);
+    game.addEventListener('keypress',hi)
 }   
 initGame()
 //fix hiding problem
