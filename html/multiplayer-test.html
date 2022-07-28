@@ -33,10 +33,17 @@
                 </div>
                 <div class = "gameplay-interface">
                     <div class = "select-player-type">
-                        <button data-playertype="Guesser" data-action="selectPlayerType">Guesser</button>
-                        <button data-playertype="WordPicker" data-action="selectPlayerType">Word Picker</button>
+                        <button data-playertype="guesser" data-action="selectPlayerType">Guesser</button>
+                        <button data-playertype="wordPicker" data-action="selectPlayerType">Word Picker</button>
                         <button data-name="startGame" data-action = "startGame">Start Game</button>
-                        <small id="small-text">Guesser : <span id="curPlayerGuesser"> none</span>       Word Picker : <span id="curPlayerWordPicker">none</span></small>
+                        <small id="small-text">
+                            <span class="guesser_info">
+                                Guesser : <span id="curPlayerGuesser"> none</span>
+                            </span>    
+                            <span class="wordpicker_info">   
+                                Word Picker : <span id="curPlayerWordPicker">none</span>
+                            </span>
+                        </small>
                         
                     </div>
                 </div>

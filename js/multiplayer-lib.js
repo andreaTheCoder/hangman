@@ -9,13 +9,12 @@ let readyToStartGame = false
 let otherPlayerReady = false
 let infoProviderText = document.body.querySelector("#info-provider-text")
 let game = document.body.querySelector("#game");
-let otherPlayerPickedType = false
-let youPickedPlayerType = false
-let playerType = "fghjk"
-
+let oppenentPlayerType = false
+let playerType = ""
+let yourName = ""
+let alreadyPickedType = false
 let peer = null;
 let conn = null;
-let yourName = '';
 let obj = {}
 const music = new Audio('notification-tone-swift-gesture.mp3')
 const ding = new Audio('ding-sound-effect_2.mp3')
@@ -24,6 +23,8 @@ function changeText(text){
 }
 function startGame(){
     addToLog("The game has started")
+    changeText("Enjoy playing this hangman game! (;")
+    setAppStatus(playingGame)
 }
 function setAppStatus(status,playerName) {
     game.dataset.appstatus = status;
@@ -62,15 +63,15 @@ function onConnectionReady(connection) {
     setAppStatus(appStateSelectPlayerType,connection.otherPlayerId)
     addToLog(msg);
     connection.on('data', function(data){
-        music.play();
         let obj = JSON.parse(data);
         let msgType = obj?.type;
         let info = obj.data
         if(msgType === "msg"){
+            music.play();
             let msg = `${connection.otherPlayerId}: ${info}`;
             addToLog(msg);
         }else if(msgType==="otherPlayerType"){
-         otherPlayerReady = true   
+         oppenentPlayerType = info   
          if(info==="guesser"){
                 curPlayerGuesser = document.body.querySelector("#curPlayerGuesser")
                 curPlayerGuesser.innerHTML = connection.otherPlayerId
@@ -87,7 +88,8 @@ function onConnectionReady(connection) {
         addToLog(msg);
     });
     connection.on('error', function(data){
-        msg = `Connection error ${connection.otherPlayerId} ${err.type}`;
+        msg = `Connection error ${connection.otherPlayerId}`;
+        addToLog("An error has occured. Try refreshing the page.")
         changeText(msg)
         addToLog(msg);
     });
@@ -125,7 +127,6 @@ function addToLog(message){
 
 function clickHandler(e){
     let action = e.target.dataset.action
-    let yourName = ""
     if(action==="getPlayerName"){
         yourName = e.target.dataset.name;
         openMySocketToOtherPlayers(yourName);
@@ -150,15 +151,18 @@ function clickHandler(e){
         changeText(msg)
     }else if(action==="selectPlayerType"){
         readyToStartGame = true
+
        playerType = e.target.dataset.playertype 
-        if(playerType==="Guesser"){
+       if(alreadyPickedType==!true){
+        alreadyPickedType = true
+        if(playerType==="guesser"){
             curGuesserPlayerTag = document.body.querySelector("#curPlayerGuesser")
             curGuesserPlayerTag.innerHTML = yourName
             obj = {}
             obj.data=`guesser`
             obj.type = 'otherPlayerType'
             sendMsg(obj)
-        }else if(playerType==="WordPicker"){
+        }else if(playerType==="wordPicker"){
             curWordPickerPlayerTag = document.body.querySelector("#curPlayerWordPicker")
             curWordPickerPlayerTag.innerHTML = yourName
             obj = {}
@@ -166,8 +170,11 @@ function clickHandler(e){
             obj.type = 'otherPlayerType'
             sendMsg(obj)
         }
-    }else if(action==="startGame"){
-        if(readyToStartGame===true+otherPlayerReady===true){
+    }else{
+        addToLog("You can't be both jobs at once. Sorry not sorry")
+    }
+}else if(action==="startGame"){
+        if(playerType!==oppenentPlayerType&&(playerType!==""&&oppenentPlayerType!=="")){
             startGame()
         }else{
             addToLog("Try picking who you want to be before you start the game")
@@ -185,7 +192,7 @@ function hi(e){
         inputMsg.value = '';
         if (conn) {
             addToLog(`You : ${obj.data}! `);
-            conn.send(JSON.stringify(msg));
+            conn.send(JSON.stringify(obj));
         }else{
             addToLog(`Your message: '${msg}' failed to send. Try connecting to another player first.`)
         }
