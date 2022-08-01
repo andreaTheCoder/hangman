@@ -3,6 +3,7 @@ const appStateSelectLocalPlayer = "selectLocalPlayer";
 const appStateSelectOtherPlayer = "selectOtherPlayer";
 const appStateWaitingForConnection = "waitingForConnection";
 const appStateSelectPlayerType = "selectPlayerType";
+const appStatePickingWord = "pickingWord"
 const playingGame = "playingGame";
 let appStateReady = "ready"
 let readyToStartGame = false
@@ -23,8 +24,13 @@ function changeText(text){
 }
 function startGame(){
     addToLog("The game has started")
+    if(playerType==="guesser"){
+        changeText("Waiting for oppenent to pick word")
+    }else{
+        changeText("Pick your word")
+    }
     changeText("Enjoy playing this hangman game! (;")
-    setAppStatus(playingGame)
+    setAppStatus(appStatePickingWord)
 }
 function setAppStatus(status,playerName) {
     game.dataset.appstatus = status;

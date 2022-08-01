@@ -42,3 +42,12 @@ h2{
 #small-text{
     font-size: medium;
 }
+#game:not([data-appstatus="playingGame"]) .guesser-interface{
+    display: none;
+}
+#game:not([data-appstatus="pickingWord"]) .wordpicker-interface{
+    display: none;
+}
+#game:not([data-appstatus="playingGame"]) .playing-game-interface{
+    display: none;
+}

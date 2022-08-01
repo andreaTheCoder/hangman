@@ -18,6 +18,7 @@
                     <button data-name="Dad" data-action="getPlayerName">Dad</button>
                     <button data-name="Emily" data-action="getPlayerName">Emily</button>
                     <button data-name="Noah" data-action="getPlayerName">Noah</button>
+                    <button data-name="Sharvi" data-action="getPlayerName">Sharvi</button>
                     <button data-name="Guest" data-action="getPlayerName">Guest</button>
                 </div>
                 <div class="select-other-player">
@@ -28,6 +29,7 @@
                     <button data-name="Dad" data-action="getOtherPlayerName">Dad</button>
                     <button data-name="Emily" data-action="getOtherPlayerName">Emily</button>
                     <button data-name="Noah" data-action="getOtherPlayerName">Noah</button>
+                    <button data-name="Sharvi" data-action="getOtherPlayerName">Sharvi</button>
                     <button data-name="Guest" data-action="getOtherPlayerName">Guest</button>
                     
                 </div>
@@ -46,6 +48,16 @@
                         </small>
                         
                     </div>
+                    <div class="guesser-interface">
+                        <input type="text" placeholder="guess a letter here!">
+                        <input type="text" placeholder="guess a word here!">
+                    </div>
+                    <div class="wordpicker-interface">
+                        <input type="text" placeholder="put your word here!">
+                    </div>
+                    <div class="playing-game-interface">
+                        <img src="starting hangman.png" alt="hangman img not loaded" height="240" length="135">
+                    </div>
                 </div>
             </div>
             <div class="gameboard">
@@ -53,7 +65,7 @@
                     <div>Log</div>
                 </div>
                 <div id="send-msg-btn">
-                    <input type="text" id="input-msg">
+                    <input type="text" id="input-msg" placeholder="Hi!">
                     <button data-action="send-msg">Send a message!</button>
                 </div>
             </div>
